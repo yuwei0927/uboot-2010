@@ -90,7 +90,11 @@ ifdef O
 ifeq ("$(origin O)", "command line")
 BUILD_DIR := $(O)
 endif
+else
+BUILD_DIR := $(CURDIR)/out
 endif
+
+TFTP_DIR := /mnt/tftp
 
 ifneq ($(BUILD_DIR),)
 saved-output := $(BUILD_DIR)
@@ -308,6 +312,7 @@ __LIBS := $(subst $(obj),,$(LIBS)) $(subst $(obj),,$(LIBBOARD))
 ALL += $(obj)u-boot.srec $(obj)u-boot.bin $(obj)System.map $(U_BOOT_NAND) $(U_BOOT_ONENAND)
 
 all:		$(ALL)
+		cp $(obj)u-boot.bin $(TFTP_DIR)
 
 $(obj)u-boot.hex:	$(obj)u-boot
 		$(OBJCOPY) ${OBJCFLAGS} -O ihex $< $@

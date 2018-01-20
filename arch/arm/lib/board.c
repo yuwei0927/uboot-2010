@@ -317,6 +317,10 @@ void start_armboot (void)
 	gd->fb_base = addr;
 #endif /* CONFIG_VFD */
 
+#if defined(CONFIG_SPEAKER)
+	audio_init();
+#endif  /* CONFIG_SPEAKER */
+
 #ifdef CONFIG_LCD
 	/* board init may have inited fb_base */
 	if (!gd->fb_base) {

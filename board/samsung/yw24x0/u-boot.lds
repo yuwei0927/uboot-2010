@@ -1,11 +1,4 @@
 /*
- * (c) Copyright 2004
- * Techware Information Technology, Inc.
- * Ming-Len Wu <minglen_wu@techware.com.tw>
- *
- * (C) Copyright 2000-2004
- * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
- *
  * (C) Copyright 2002
  * Gary Jennejohn, DENX Software Engineering, <gj@denx.de>
  *
@@ -26,10 +19,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- *
  */
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
+/*OUTPUT_FORMAT("elf32-arm", "elf32-arm", "elf32-arm")*/
 OUTPUT_ARCH(arm)
 ENTRY(_start)
 SECTIONS
@@ -37,16 +30,15 @@ SECTIONS
 	. = 0x00000000;
 
 	. = ALIGN(4);
-	.text :
+	.text      :
 	{
-		arch/arm/cpu/arm920t/start.o	(.text)
-		board/samsung/yw24x0/lowlevel_init.o (.text)
-		board/samsung/yw24x0/boot_init.o (.text)
-		*(.text)
+	  cpu/arm920t/start.o	(.text)
+          board/yw2440/boot_init.o (.text)
+	  *(.text)
 	}
 
 	. = ALIGN(4);
-	.rodata : { *(SORT_BY_ALIGNMENT(SORT_BY_NAME(.rodata*))) }
+	.rodata : { *(.rodata) }
 
 	. = ALIGN(4);
 	.data : { *(.data) }
@@ -61,6 +53,6 @@ SECTIONS
 
 	. = ALIGN(4);
 	__bss_start = .;
-	.bss (NOLOAD) : { *(.bss) . = ALIGN(4); }
+	.bss : { *(.bss) }
 	_end = .;
 }

@@ -113,9 +113,11 @@ start_code:
 	bic	r0, r0, #0x1f
 	orr	r0, r0, #0xd3
 	msr	cpsr, r0
-
+#if 0
+//#ifndef CONFIG_S3C24X0
 	bl	coloured_LED_init
 	bl	red_LED_on
+#endif
 
 #if	defined(CONFIG_AT91RM9200DK) || defined(CONFIG_AT91RM9200EK)
 	/*
@@ -131,7 +133,6 @@ copyex:
 	bne	copyex
 #endif
 
-#ifdef CONFIG_S3C24X0
 	/* turn off the watchdog */
 
 # if defined(CONFIG_S3C2400)
@@ -140,6 +141,7 @@ copyex:
 #  define CLKDIVN	0x14800014	/* clock divisor register */
 #else
 #  define pWTCON	0x53000000
+#  define INTMOD	0X4A000004
 #  define INTMSK	0x4A000008	/* Interupt-Controller base addresses */
 #  define INTSUBMSK	0x4A00001C
 #  define CLKDIVN	0x4C000014	/* clock divisor register */
@@ -155,46 +157,67 @@ copyex:
 	mov	r1, #0xffffffff
 	ldr	r0, =INTMSK
 	str	r1, [r0]
-# if defined(CONFIG_S3C2410)
-	ldr	r1, =0x3ff
+# if defined(CONFIG_S3C2410) || defined(CONFIG_S3C2440)
+	ldr	r1, =0x7ff
 	ldr	r0, =INTSUBMSK
 	str	r1, [r0]
 # endif
 
+#if 0
 	/* FCLK:HCLK:PCLK = 1:2:4 */
 	/* default FCLK is 120 MHz ! */
 	ldr	r0, =CLKDIVN
 	mov	r1, #3
 	str	r1, [r0]
-#endif	/* CONFIG_S3C24X0 */
+#endif
+
+#ifdef LED_DEBUG
+/* LED1 on */
+#if defined(CONFIG_S3C2440)
+#define GPBCON	0x56000010
+#define GPBDAT	0x56000014
+
+	ldr r0, =GPBCON
+	bic	r1,r0,#0x3fc00
+	orr	r1,r0,#0x15400
+	str r1, [r0]
+	
+	ldr	r0, =GPBDAT
+	mov	r1, #0x1c0
+	str	r1, [r0]	
+#endif
+#endif   /* LED_DEBUG */
+
 
 	/*
 	 * we do sys-critical inits only at reboot,
 	 * not when booting from ram!
 	 */
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	bl	cpu_init_crit
+#ifdef LED_DEBUG
+/* LED2 on */
+#if defined(CONFIG_S3C2440)
+
+	ldr	r0, =GPBDAT
+	mov	r1, #0x1a0
+	str	r1, [r0]	
+#endif
 #endif
 
-#ifndef CONFIG_SKIP_RELOCATE_UBOOT
-relocate:				/* relocate U-Boot to RAM	    */
 	adr	r0, _start		/* r0 <- current position of code   */
 	ldr	r1, _TEXT_BASE		/* test if we run from flash or RAM */
-	cmp	r0, r1			/* don't reloc during debug         */
-	beq	stack_setup
+	cmp     r0, r1                  /* don't reloc during debug         */
+	blne	cpu_init_crit
+#endif
+#ifdef LED_DEBUG
+/* LED1/2 on */
+#if defined(CONFIG_S3C2440)
 
-	ldr	r2, _armboot_start
-	ldr	r3, _bss_start
-	sub	r2, r3, r2		/* r2 <- size of armboot            */
-	add	r2, r0, r2		/* r2 <- source end address         */
-
-copy_loop:
-	ldmia	r0!, {r3-r10}		/* copy from source address [r0]    */
-	stmia	r1!, {r3-r10}		/* copy to   target address [r1]    */
-	cmp	r0, r2			/* until source end addreee [r2]    */
-	ble	copy_loop
-#endif	/* CONFIG_SKIP_RELOCATE_UBOOT */
-
+	ldr	r0, =GPBDAT
+	mov	r1, #0x180
+	str	r1, [r0]	
+#endif
+#endif
 	/* Set up the stack						    */
 stack_setup:
 	ldr	r0, _TEXT_BASE		/* upper 128 KiB: relocated uboot   */
@@ -205,6 +228,51 @@ stack_setup:
 #endif
 	sub	sp, r0, #12		/* leave 3 words for abort-stack    */
 	bic	sp, sp, #7		/* 8-byte alignment for ABI compliance */
+#ifdef LED_DEBUG
+/* LED1&3 on */
+#if defined(CONFIG_S3C2440)
+
+	ldr	r0, =GPBDAT
+	mov	r1, #0x140
+	str	r1, [r0]	
+#endif
+#endif
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
+    bl clock_init   /* 时钟初始�?400MHz */
+#endif    
+
+#ifdef LED_DEBUG
+/* LED1&4 on */
+#if defined(CONFIG_S3C2440)
+
+	ldr	r0, =GPBDAT
+	mov	r1, #0xc0
+	str	r1, [r0]	
+#endif
+#endif
+
+#ifndef CONFIG_SKIP_RELOCATE_UBOOT
+relocate:				/* relocate U-Boot to RAM	    */
+	adr	r0, _start		/* r0 <- current position of code   */
+	ldr	r1, _TEXT_BASE		/* test if we run from flash or RAM */
+	cmp	r0, r1			/* don't reloc during debug         */
+	beq     clear_bss
+
+	ldr	r2, _armboot_start
+	ldr	r3, _bss_start
+	sub	r2, r3, r2		/* r2 <- size of armboot            */
+
+	bl  CopyCode2Ram	/* r0: source, r1: dest, r2: size */
+#ifdef LED_DEBUG
+/* LED1&2&3 on */
+#if defined(CONFIG_S3C2440)
+
+	ldr	r0, =GPBDAT
+	mov	r1, #0x100
+	str	r1, [r0]	
+#endif
+#endif	
+#endif	/* CONFIG_SKIP_RELOCATE_UBOOT */
 
 clear_bss:
 	ldr	r0, _bss_start		/* find start of bss segment        */
@@ -216,6 +284,15 @@ clbss_l:str	r2, [r0]		/* clear loop...                    */
 	cmp	r0, r1
 	ble	clbss_l
 
+#ifdef LED_DEBUG
+/* LED124 on */
+#if defined(CONFIG_S3C2440)
+
+	ldr	r0, =GPBDAT
+	mov	r1, #0x80
+	str	r1, [r0]	
+#endif
+#endif
 	ldr	pc, _start_armboot
 
 _start_armboot:	.word start_armboot
@@ -238,6 +315,16 @@ cpu_init_crit:
 	/*
 	 * flush v4 I/D caches
 	 */
+#ifdef LED_DEBUG
+/* LED3 on */
+#if defined(CONFIG_S3C2440)
+
+	ldr	r0, =GPBDAT
+	mov	r1, #0x160
+	str	r1, [r0]	
+#endif
+#endif
+
 	mov	r0, #0
 	mcr	p15, 0, r0, c7, c7, 0	/* flush v3/v4 cache */
 	mcr	p15, 0, r0, c8, c7, 0	/* flush v4 TLB */
@@ -257,10 +344,27 @@ cpu_init_crit:
 	 * because memory timing is board-dependend, you will
 	 * find a lowlevel_init.S in your board directory.
 	 */
+#ifdef LED_DEBUG
+/* LED4 on */
+#if defined(CONFIG_S3C2440)
+
+	ldr	r0, =GPBDAT
+	mov	r1, #0xe0
+	str	r1, [r0]	
+#endif
+#endif
 	mov	ip, lr
 
 	bl	lowlevel_init
+#ifdef LED_DEBUG
+/* LED24 on */
+#if defined(CONFIG_S3C2440)
 
+	ldr	r0, =GPBDAT
+	mov	r1, #0xa0
+	str	r1, [r0]	
+#endif
+#endif
 	mov	lr, ip
 	mov	pc, lr
 #endif /* CONFIG_SKIP_LOWLEVEL_INIT */

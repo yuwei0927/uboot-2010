@@ -78,7 +78,7 @@ struct s3c24x0_interrupt {
 	u32	PRIORITY;
 	u32	INTPND;
 	u32	INTOFFSET;
-#ifdef CONFIG_S3C2410
+#if defined(CONFIG_S3C2410) || defined(CONFIG_S3C2440)
 	u32	SUBSRCPND;
 	u32	INTSUBMSK;
 #endif
@@ -88,11 +88,11 @@ struct s3c24x0_interrupt {
 /* DMAS (see manual chapter 8) */
 struct s3c24x0_dma {
 	u32	DISRC;
-#ifdef CONFIG_S3C2410
+#if defined(CONFIG_S3C2410) || defined(CONFIG_S3C2440)
 	u32	DISRCC;
 #endif
 	u32	DIDST;
-#ifdef CONFIG_S3C2410
+#if defined(CONFIG_S3C2410) || defined(CONFIG_S3C2440)
 	u32	DIDSTC;
 #endif
 	u32	DCON;
@@ -103,7 +103,7 @@ struct s3c24x0_dma {
 #ifdef CONFIG_S3C2400
 	u32	res[1];
 #endif
-#ifdef CONFIG_S3C2410
+#if defined(CONFIG_S3C2410) || defined(CONFIG_S3C2440)
 	u32	res[7];
 #endif
 };
@@ -122,6 +122,10 @@ struct s3c24x0_clock_power {
 	u32	CLKCON;
 	u32	CLKSLOW;
 	u32	CLKDIVN;
+#ifdef CONFIG_S3C2440
+	u32 CAMDIVN;
+#endif
+	
 };
 
 
@@ -141,7 +145,7 @@ struct s3c24x0_lcd {
 	u32	res[8];
 	u32	DITHMODE;
 	u32	TPAL;
-#ifdef CONFIG_S3C2410
+#if defined(CONFIG_S3C2410) || defined(CONFIG_S3C2440)
 	u32	LCDINTPND;
 	u32	LCDSRCPND;
 	u32	LCDINTMSK;
@@ -151,13 +155,30 @@ struct s3c24x0_lcd {
 
 
 /* NAND FLASH (see S3C2410 manual chapter 6) */
-struct s3c2410_nand {
+struct s3c24x0_nand {
 	u32	NFCONF;
+#ifdef CONFIG_S3C2440
+	u32 NFCONT;
+#endif
 	u32	NFCMD;
 	u32	NFADDR;
 	u32	NFDATA;
+#ifdef CONFIG_S3C2440
+	u32	NFMECCD0;
+	u32	NFMECCD1;
+	u32	NFSECCD;
+	u32	NFSTAT;
+	u32	NFESTAT0;
+	u32	NFESTAT1;
+	u32	NFMECC0;
+	u32	NFMECC1;
+	u32	NFSECC;
+	u32	NFSBLK;
+	u32	NFEBLK;
+#else
 	u32	NFSTAT;
 	u32	NFECC;
+#endif
 };
 
 
@@ -447,6 +468,63 @@ struct s3c24x0_gpio {
 	u32	GSTATUS3;
 	u32	GSTATUS4;
 #endif
+#ifdef CONFIG_S3C2440
+	u32	GPACON;
+	u32	GPADAT;
+	u32	res1[2];
+	u32	GPBCON;
+	u32	GPBDAT;
+	u32	GPBUP;
+	u32	res2;
+	u32	GPCCON;
+	u32	GPCDAT;
+	u32	GPCUP;
+	u32	res3;
+	u32	GPDCON;
+	u32	GPDDAT;
+	u32	GPDUP;
+	u32	res4;
+	u32	GPECON;
+	u32	GPEDAT;
+	u32	GPEUP;
+	u32	res5;
+	u32	GPFCON;
+	u32	GPFDAT;
+	u32	GPFUP;
+	u32	res6;
+	u32	GPGCON;
+	u32	GPGDAT;
+	u32	GPGUP;
+	u32	res7;
+	u32	GPHCON;
+	u32	GPHDAT;
+	u32	GPHUP;
+	u32	res8;
+
+	u32	MISCCR;
+	u32	DCLKCON;
+	u32	EXTINT0;
+	u32	EXTINT1;
+	u32	EXTINT2;
+	u32	EINTFLT0;
+	u32	EINTFLT1;
+	u32	EINTFLT2;
+	u32	EINTFLT3;
+	u32	EINTMASK;
+	u32	EINTPEND;
+	u32	GSTATUS0;
+	u32	GSTATUS1;
+	u32	GSTATUS2;
+	u32	GSTATUS3;
+	u32	GSTATUS4;
+#ifdef CONFIG_S3C2440
+	u32	res9[4];
+	u32	GPJCON;
+	u32	GPJDAT;
+	u32	GPJUP;
+#endif	
+#endif
+
 };
 
 
@@ -535,12 +613,15 @@ struct s3c2400_adc {
 
 
 /* ADC (see manual chapter 16) */
-struct s3c2410_adc {
+struct s3c24x0_adc {
 	u32	ADCCON;
 	u32	ADCTSC;
 	u32	ADCDLY;
 	u32	ADCDAT0;
 	u32	ADCDAT1;
+#ifdef CONFIG_S3C2440
+	u32 ADCUPDN;
+#endif
 };
 
 
@@ -623,7 +704,7 @@ struct s3c2400_mmc {
 
 
 /* SD INTERFACE (see S3C2410 manual chapter 19) */
-struct s3c2410_sdi {
+struct s3c24x0_sdi {
 	u32	SDICON;
 	u32	SDIPRE;
 	u32	SDICARG;
@@ -639,6 +720,16 @@ struct s3c2410_sdi {
 	u32	SDIDCNT;
 	u32	SDIDSTA;
 	u32	SDIFSTA;
+#ifdef CONFIG_S3C2440
+	u32 SDIIMSK;
+#ifdef __BIG_ENDIAN
+	u8	res[3];
+	u8	SDIDAT;
+#else
+	u8	SDIDAT;
+	u8	res[3];
+#endif
+#else	
 #ifdef __BIG_ENDIAN
 	u8	res[3];
 	u8	SDIDAT;
@@ -647,6 +738,7 @@ struct s3c2410_sdi {
 	u8	res[3];
 #endif
 	u32	SDIIMSK;
+#endif
 };
 
 #endif /*__S3C24X0_H__*/

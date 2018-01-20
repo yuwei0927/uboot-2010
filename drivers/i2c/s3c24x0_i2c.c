@@ -57,11 +57,11 @@ static int GetI2CSDA(void)
 {
 	struct s3c24x0_gpio *gpio = s3c24x0_get_base_gpio();
 
-#ifdef CONFIG_S3C2410
-	return (readl(&gpio->GPEDAT) & 0x8000) >> 15;
-#endif
 #ifdef CONFIG_S3C2400
 	return (readl(&gpio->PGDAT) & 0x0020) >> 5;
+#endif
+#ifdef CONFIG_S3C24X0
+	return (readl(&gpio->GPEDAT) & 0x8000) >> 15;
 #endif
 }
 
@@ -76,11 +76,11 @@ static void SetI2CSCL(int x)
 {
 	struct s3c24x0_gpio *gpio = s3c24x0_get_base_gpio();
 
-#ifdef CONFIG_S3C2410
-	writel((readl(&gpio->GPEDAT) & ~0x4000) | (x & 1) << 14, &gpio->GPEDAT);
-#endif
 #ifdef CONFIG_S3C2400
 	writel((readl(&gpio->PGDAT) & ~0x0040) | (x & 1) << 6, &gpio->PGDAT);
+#endif
+#ifdef CONFIG_S3C24X0
+	writel((readl(&gpio->GPEDAT) & ~0x4000) | (x & 1) << 14, &gpio->GPEDAT);
 #endif
 }
 
@@ -128,24 +128,24 @@ void i2c_init(int speed, int slaveadd)
 	}
 
 	if ((readl(&i2c->IICSTAT) & I2CSTAT_BSY) || GetI2CSDA() == 0) {
-#ifdef CONFIG_S3C2410
-		ulong old_gpecon = readl(&gpio->GPECON);
-#endif
 #ifdef CONFIG_S3C2400
 		ulong old_gpecon = readl(&gpio->PGCON);
+#endif
+#ifdef CONFIG_S3C24X0
+				ulong old_gpecon = readl(&gpio->GPECON);
 #endif
 		/* bus still busy probably by (most) previously interrupted
 		   transfer */
 
-#ifdef CONFIG_S3C2410
-		/* set I2CSDA and I2CSCL (GPE15, GPE14) to GPIO */
-		writel((readl(&gpio->GPECON) & ~0xF0000000) | 0x10000000,
-		       &gpio->GPECON);
-#endif
 #ifdef CONFIG_S3C2400
 		/* set I2CSDA and I2CSCL (PG5, PG6) to GPIO */
 		writel((readl(&gpio->PGCON) & ~0x00003c00) | 0x00001000,
 		       &gpio->PGCON);
+#endif
+#ifdef CONFIG_S3C24X0
+				/* set I2CSDA and I2CSCL (GPE15, GPE14) to GPIO */
+				writel((readl(&gpio->GPECON) & ~0xF0000000) | 0x10000000,
+					   &gpio->GPECON);
 #endif
 
 		/* toggle I2CSCL until bus idle */
@@ -163,11 +163,11 @@ void i2c_init(int speed, int slaveadd)
 		udelay(1000);
 
 		/* restore pin functions */
-#ifdef CONFIG_S3C2410
-		writel(old_gpecon, &gpio->GPECON);
-#endif
 #ifdef CONFIG_S3C2400
 		writel(old_gpecon, &gpio->PGCON);
+#endif
+#ifdef CONFIG_S3C24X0
+			writel(old_gpecon, &gpio->GPECON);
 #endif
 	}
 

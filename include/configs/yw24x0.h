@@ -212,8 +212,9 @@
 #ifdef CONFIG_SST_39VF1601
 #define PHYS_FLASH_SIZE		0x00200000 /* 2MB */
 #define CONFIG_SYS_MAX_FLASH_SECT	(512)	/* max number of sectors on one chip, 512 sectors */
-//根据SST39VF1601的芯片手册描述，对其进行操作有两种方式：块方式和扇区方式。现采用扇区方式(sector)�? sector = 2Kword = 4Kbyte，所�?M的Nor Flash共有512个sector
-#define CONFIG_ENV_ADDR		(CONFIG_SYS_FLASH_BASE + 0x0F0000) /* addr of environment */
+//根据SST39VF1601的芯片手册描述，对其进行操作有两种方式：块方式和扇区方式。
+//现采用扇区方式(sector) sector = 2Kword = 4Kbyte，所对应的Nor Flash共有512个sector
+#define CONFIG_ENV_ADDR		(CONFIG_SYS_FLASH_BASE + 0x100000) /* addr of environment */
 #define MAIN_SECT_SIZE		0x1000	/* 4 KByte/sector */
 #endif
 
@@ -229,14 +230,10 @@
 /*-----------------------------------------------------------------------
  * NAND flash settings
  */
-#define CONFIG_NAND_S3C24x0		1
+#define CONFIG_NAND_S3C2440		1
 #define CONFIG_SYS_NAND_BASE           0
 #define CONFIG_SYS_MAX_NAND_DEVICE     1
 #define NAND_MAX_CHIPS          1
-
-//#define CONFIG_DISPLAY_CPUINFO	1
-//#define CONFIG_DISPLAY_BOARDINFO 1
-
 
 /* Audio */
 //#define CONFIG_SPEAKER			1

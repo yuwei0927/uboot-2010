@@ -165,4 +165,68 @@ int checkboard(void)
 }
 #endif
 
+#if 0
++#if defined(CONFIG_VIDEO_S3C2440)
++#define MVAL                   (13)
++#define MVAL_USED              (0)
++#define INVVDEN                (1)
++#define BSWP                   (0)
++//#define HWSWP                  (1)//涓轰竴鏃朵細閫犳垚瀛楃鏄剧ず鐨勯敊璇紝鏄剧ず寰堟ā绯?+#define HWSWP                  (1)
++//TFT 240320
++#define LCD_XSIZE_TFT_240320   (320)
++#define LCD_YSIZE_TFT_240320   (240)
++//TFT 240320
++#define HOZVAL_TFT_240320      (LCD_XSIZE_TFT_240320-1)
++#define LINEVAL_TFT_240320     (LCD_YSIZE_TFT_240320-1)
++//Timing parameter for WXCAT35-TG#001
++#if 1
++#define VBPD_240320            (3)
++#define VFPD_240320            (5)
++#define VSPW_240320            (15)
++#define HBPD_240320            (58)
++#define HFPD_240320            (15)
++#define HSPW_240320_WXCAT35    (8)//adjust the horizontal displacement of the screen
++#endif
++#if 0
++#define VBPD_240320            (14)
++#define VFPD_240320            (11)
++#define VSPW_240320            (2)
++#define HBPD_240320            (37)
++#define HFPD_240320            (19)
++#define HSPW_240320_WXCAT35    (29)
++#endif
++#define CLKVAL_TFT_240320      (7)
++//FCLK = 405MHZ, HCLK = 101.25MHZ, VCLK=4602272HZ
++void board_video_init(GraphicDevice *pGD)
++{
++    struct s3c24x0_lcd * const lcd = s3c24x0_get_base_lcd();
++   /*Configuration for fl2440*/
++  // lcd->LCDCON1 = 0x00000778;
++   lcd->LCDCON1 = (CLKVAL_TFT_240320 <<8)|(MVAL_USED <<7)|(3<<5)|(12<<1)|0;
++   lcd->LCDCON2 = (VBPD_240320<<24)|(LINEVAL_TFT_240320<<14)|(VFPD_240320<<6)|(VSPW_240320);
++   lcd->LCDCON3 = (HBPD_240320<<19)|(HOZVAL_TFT_240320<<8)|(HFPD_240320);
++   lcd->LCDCON4 = (MVAL<<8)|(HSPW_240320_WXCAT35);
++ // lcd->LCDCON5 = 0x00000f09;
++   lcd->LCDCON5 = (1<<11)|(1<<9)|(1<<8)|(1<<3)|(BSWP<<1)|(HWSWP);
++  // lcd->LCDCON5 = (1<<11)|(0<<9)|(0<<8)|(0<<6)|(1<<3)|(BSWP<<1)|(HWSWP);
++   lcd->LPCSEL = 0x00000000;
++}
++#endif /*CONFIG_VIDEO_S3C2440*/
++ 
++#ifdef CONFIG_CMD_NET
++int board_eth_init(bd_t *bis)
++{
++	int rc = 0;
++#ifdef CONFIG_CS8900
++	rc = cs8900_initialize(0, CONFIG_CS8900_BASE);
++#endif
++
++#ifdef CONFIG_DRIVER_DM9000
++	rc = dm9000_initialize(bis);
++#endif
++	return rc;
++}
++#endif
+
+#endif
 

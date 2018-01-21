@@ -119,18 +119,18 @@ static ushort flash_read_ushort (uint offset)
 	
 	/* arm simple, non interrupt dependent timer */
 	reset_timer_masked ();
-	//udelay(10);
+	//udelay(1000);
 	MEM_FLASH_ADDR2 = CMD_UNLOCK2;
 	
 	/* arm simple, non interrupt dependent timer */
 	reset_timer_masked ();
-	//udelay(10);
+	//udelay(1000);
 	MEM_FLASH_ADDR1 = CMD_CFI_ENTRY;
-	//udelay(100);
+	//udelay(1000);
 	/* arm simple, non interrupt dependent timer */
 	reset_timer_masked ();
 
-	while (1)
+	while (0)    //在Uboot1.1.6中，这个地方是需要的...
 	{
 
 		if ((*addr & 0x40) != (*addr & 0x40)) 
@@ -254,7 +254,7 @@ int flash_erase (flash_info_t * info, int s_first, int s_last)
 		printf ("Erasing sector %2d ... ", sect);
 
 		/* arm simple, non interrupt dependent timer */
-		reset_timer_masked ();
+		udelay (1000);
 
 		if (info->protect[sect] == 0) {	/* not protected */
 			vu_short *addr = (vu_short *) (info->start[sect]);

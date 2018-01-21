@@ -319,6 +319,24 @@ int do_flinfo ( cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	return 0;
 }
 
+int do_flread ( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+	flash_info_t *info;
+	ulong addr;
+	ulong bank;
+	if (argc != 2) {	/* print info for all FLASH banks */
+		printf ("Must set reg addr\n");
+		return 0;
+	}
+
+	addr = simple_strtoul(argv[1], NULL, 16);
+	for (bank=1; bank<=CONFIG_SYS_MAX_FLASH_BANKS; ++bank) {
+		info = &flash_info[bank-1];
+		printf ("addr 0x%x = 0x%x\n", addr, flash_read (info, addr));
+	}
+	return 0;
+}
+
 int do_flerase (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 #ifndef CONFIG_SYS_NO_FLASH
@@ -702,6 +720,12 @@ U_BOOT_CMD(
 	"print FLASH memory information",
 	"\n    - print information for all FLASH memory banks\n"
 	"flinfo N\n    - print information for FLASH memory bank # N"
+);
+
+U_BOOT_CMD(
+	flread,    2,    1,    do_flread,
+	"read FLASH memory ID information",
+	"flread N\n    - print ID information for FLASH Reg # N\n"
 );
 
 U_BOOT_CMD(

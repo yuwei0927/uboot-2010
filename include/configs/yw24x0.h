@@ -258,6 +258,9 @@
 #define CFG_CONSOLE_INFO_QUIET        //support display of console information at boot
 #define CONFIG_CONSOLE_MUX
 
+#define CONFIG_SYS_CONSOLE_IS_IN_ENV
+
+
 
 #define LCD_VIDEO_ADDR          0x33b00000
 

@@ -379,8 +379,11 @@ void start_armboot (void)
 	stdio_init ();	/* get the devices list going. */
 
 #ifdef CONFIG_SYS_CONSOLE_IS_IN_ENV
+	if (!getenv("stdout"))
 		setenv("stdout", "vga,serial");
+	if (!getenv("stderr"))
 		setenv("stderr", "vga");
+	if (!getenv("stdin"))
 		setenv("stdin", "vga");
 #endif
 

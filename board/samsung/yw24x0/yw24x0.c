@@ -91,7 +91,7 @@ int dram_init (void)
 int	audio_init(void)
 {
 	struct s3c24x0_gpio * const gpio = s3c24x0_get_base_gpio();
-	S3C24X0_TIMERS * const timers = S3C24X0_GetBase_TIMERS();
+	struct s3c24x0_timers * const timers = s3c24x0_get_base_timers();
 	unsigned int freq = 5000;
 
 	/* set GPB0 as TOUT0 */  
@@ -164,6 +164,22 @@ int checkboard(void)
 	return 0;
 }
 #endif
+
+#ifdef CONFIG_CMD_NET
+int board_eth_init(bd_t *bis)
+{
+	int rc = 0;
+#ifdef CONFIG_CS8900
+	rc = cs8900_initialize(0, CONFIG_CS8900_BASE);
+#endif
+
+#ifdef CONFIG_DRIVER_DM9000
+	rc = dm9000_initialize(bis);
+#endif
+	return rc;
+}
+#endif
+
 
 #if 0
 +#if defined(CONFIG_VIDEO_S3C2440)

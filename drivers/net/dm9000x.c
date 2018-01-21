@@ -348,12 +348,12 @@ static int dm9000_init(struct eth_device *dev, bd_t *bd)
 		DM9000_iow(oft, dev->enetaddr[i]);
 	for (i = 0, oft = 0x16; i < 8; i++, oft++)
 		DM9000_iow(oft, 0xff);
-
+#if 0
 	/* read back mac, just to be sure */
 	for (i = 0, oft = 0x10; i < 6; i++, oft++)
 		DM9000_DBG("%02x:", DM9000_ior(oft));
 	DM9000_DBG("\n");
-
+#endif
 	/* Activate DM9000 */
 	/* RX enable */
 	DM9000_iow(DM9000_RCR, RCR_DIS_LONG | RCR_DIS_CRC | RCR_RXEN);
@@ -404,7 +404,7 @@ static int dm9000_send(struct eth_device *netdev, volatile void *packet,
 	int tmo;
 	struct board_info *db = &dm9000_info;
 
-	DM9000_DMP_PACKET(__func__ , packet, length);
+//	DM9000_DMP_PACKET(__func__ , packet, length);
 
 	DM9000_iow(DM9000_ISR, IMR_PTM); /* Clear Tx bit in ISR */
 
@@ -514,7 +514,7 @@ static int dm9000_rx(struct eth_device *netdev)
 				dm9000_reset();
 			}
 		} else {
-			DM9000_DMP_PACKET(__func__ , rdptr, RxLen);
+//			DM9000_DMP_PACKET(__func__ , rdptr, RxLen);
 
 			DM9000_DBG("passing packet to upper layer\n");
 			NetReceive(NetRxPackets[0], RxLen);
@@ -593,7 +593,7 @@ phy_read(int reg)
 	val = (DM9000_ior(DM9000_EPDRH) << 8) | DM9000_ior(DM9000_EPDRL);
 
 	/* The read data keeps on REG_0D & REG_0E */
-	DM9000_DBG("phy_read(0x%x): 0x%x\n", reg, val);
+//	DM9000_DBG("phy_read(0x%x): 0x%x\n", reg, val);
 	return val;
 }
 

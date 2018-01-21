@@ -80,9 +80,13 @@
 #define CONFIG_DRIVER_DM9000		1
 #ifdef CONFIG_DRIVER_DM9000
 #define CONFIG_DM9000_USE_16BIT 	1
+#if 0
 #define CONFIG_DM9000_BASE			0x20000000
-#define DM9000_IO					0x20000000  
-#define DM9000_DATA					0x20000004
+#else
+#define CONFIG_DM9000_BASE               0x20000300
+#endif
+#define DM9000_IO                        CONFIG_DM9000_BASE 
+#define DM9000_DATA                      (CONFIG_DM9000_BASE + 4)
 #endif
 
 
@@ -236,7 +240,7 @@
 #define NAND_MAX_CHIPS          1
 
 /* Audio */
-//#define CONFIG_SPEAKER			1
+#define CONFIG_SPEAKER			1
 //#define CONFIG_HEADPHONE		0
 //#define CONFIG_AUDIO_UDA1341TS	0
 

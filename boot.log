@@ -1,4 +1,4 @@
-U-Boot 2010.09-00000-g799aa76-dirty (Jan 21 2018 - 00:11:49)
+U-Boot 2010.09-00000-g3ae2e73-dirty (Jan 21 2018 - 17:14:18)
 
 Chip ID:0x32440001
 This CPU chip is S3C2440
@@ -14,17 +14,14 @@ CLKDIVN: 5h
 Board: YW2440
 DRAM:  64 MiB
 Flash: 2 MiB
-NAND:  No NAND device found!!!
-0 MiB
-*** Warning - bad CRC or NAND, using default environment
-
+NAND:  64 MiB
 In:    serial
 Out:   serial
 Err:   serial
-Net:   No ethernet found.
+Net:   dm9000
 Hit any key to stop autoboot:  0 
 
-no devices available
+NAND read: 'kernel' is not a number
 Wrong Image Format for bootm command
 ERROR: can't get kernel image!
 uboot # 

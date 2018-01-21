@@ -244,13 +244,36 @@
 //#define CONFIG_HEADPHONE		0
 //#define CONFIG_AUDIO_UDA1341TS	0
 
-/* LCD */
-//#define CONFIG_LCD			0
-//#define CONFIG_LCD_N35		1
+/*LCD support*/
+#define CONFIG_VIDEO_S3C2440     1
+#define CONFIG_VIDEO_LOGO        1
+#define CONFIG_VIDEO_BMP_LOGO           1
+//#define VIDEO_FB_16BPP_PIXEL_SWAP       1
+#define VIDEO_FB_16BPP_WORD_SWAP       1
+#define CONFIG_CMD_BMP                  1
+//#define CONFIG_LCD               1
+#define CONFIG_VIDEO               1
+#define CONFIG_CFB_CONSOLE       1
+//#define CONFIG_VGA_AS_SINGLE_DEVICE 1          //see Cfb_console.c/drv_video_init
+#define CFG_CONSOLE_INFO_QUIET        //support display of console information at boot
+
+#define LCD_VIDEO_ADDR          0x33b00000
+
+/*for PC-keyboard*/
+#define VIDEO_KBD_INIT_FCT      0
+/*for PC-keyboard*/
+
+#define VIDEO_TSTC_FCT          serial_tstc
+#define VIDEO_GETC_FCT          serial_getc
+
+#define CONFIG_SERIAL_MULTI     1
+/*LCD support*/
+
 
 #define CONFIG_DISPLAY_CPUINFO	1
 #define	CONFIG_DISPLAY_BOARDINFO	1
 
 //#define LED_DEBUG				1
+
 
 #endif	/* __CONFIG_H */

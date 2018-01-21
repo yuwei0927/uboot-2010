@@ -246,8 +246,8 @@
 
 /*LCD support*/
 #define CONFIG_VIDEO_S3C2440     1
-//#define CONFIG_VIDEO_LOGO        1	//display Linux logo in upper left corner
-//#define CONFIG_VIDEO_BMP_LOGO           1
+#define CONFIG_VIDEO_LOGO        1	//display Linux logo in upper left corner
+#define CONFIG_VIDEO_BMP_LOGO           1
 //#define VIDEO_FB_16BPP_PIXEL_SWAP       1
 #define VIDEO_FB_16BPP_WORD_SWAP       1
 //#define CONFIG_CMD_BMP                  1

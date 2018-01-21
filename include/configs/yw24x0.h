@@ -256,6 +256,8 @@
 #define CONFIG_CFB_CONSOLE       1
 //#define CONFIG_VGA_AS_SINGLE_DEVICE 1          //see Cfb_console.c/drv_video_init
 #define CFG_CONSOLE_INFO_QUIET        //support display of console information at boot
+#define CONFIG_CONSOLE_MUX
+
 
 #define LCD_VIDEO_ADDR          0x33b00000
 

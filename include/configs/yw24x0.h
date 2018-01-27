@@ -147,7 +147,7 @@
 #define CONFIG_BOOTDELAY	1
 #define CONFIG_BOOTARGS    	"noinitrd root=/dev/mtdblock2 init=/linuxrc console=ttySAC0"
 #define CONFIG_ETHADDR	    08:00:3e:26:0a:5b
-#define CONFIG_NETMASK      255.255.0.0
+#define CONFIG_NETMASK      255.255.255.0
 #define CONFIG_IPADDR		172.17.1.150
 #define CONFIG_SERVERIP		172.17.1.110
 /*#define CONFIG_BOOTFILE	"elinos-lart" */

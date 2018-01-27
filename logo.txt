@@ -1,0 +1,4 @@
+当前显示的Logo是在编译uboot中自动将bmp文件转化成数组，放在头文件中，头文件路径如下。
+out/include/bmp_logo.h
+
+当前的方案是将Logo编译在uboot镜像中，后面我的方案是将Logo变成一个单独的镜像，不包含在uboot镜像中。方案待实现！
